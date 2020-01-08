@@ -19,15 +19,6 @@ module Octopus
         reset_column_information
         instance_variable_set(:@quoted_table_name, nil)
       end
-
-      def using(shard)
-        if Octopus.enabled?
-          clean_table_name
-          Octopus::ScopeProxy.new(shard, self)
-        else
-          self
-        end
-      end
     end
 
     module InstanceMethods
@@ -73,6 +64,15 @@ module Octopus
 
     module ClassMethods
       include SharedMethods
+
+      def using(shard)
+        if Octopus.enabled?
+          clean_table_name
+          Octopus::ScopeProxy.new(shard, self)
+        else
+          self
+        end
+      end
 
       def self.extended(base)
         base.class_attribute(:replicated)
